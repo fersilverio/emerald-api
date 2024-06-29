@@ -13,7 +13,7 @@ import jakarta.persistence.Table;
 @Table(name = "associate_users")
 public class AssociateUser {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(unique = true)
     private String email;
@@ -30,6 +30,23 @@ public class AssociateUser {
     private Date createDate;
     @Column(name = "update_date")
     private Date updateDate;
+
+    public AssociateUser(){
+
+    }
+
+    public AssociateUser(String name, String email, String nickName, String password){
+        this.name = name;
+        this.email = email;
+        this.nickName = nickName;
+        this.password = password;
+        this.numberOfCards = null;
+        this.createDate = new Date();
+        this.updateDate = new Date();
+        this.level = null;
+        this.rank = null;
+        this.clan = null;
+    }
 
     /**
      * @return Long return the id
