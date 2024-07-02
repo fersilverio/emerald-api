@@ -1,8 +1,5 @@
 package com.obsidian.emeraldapi.associateuser.controllers;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.RecordComponent;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,6 +18,7 @@ import com.obsidian.emeraldapi.associateuser.dto.AssociateUserDto;
 import com.obsidian.emeraldapi.associateuser.dto.UpdateAssociateUserDto;
 import com.obsidian.emeraldapi.associateuser.models.AssociateUser;
 import com.obsidian.emeraldapi.associateuser.repositories.AssociateUserRepository;
+import com.obsidian.emeraldapi.utils.RecordValidation;
 
 import jakarta.validation.Valid;
 
@@ -64,58 +62,65 @@ public class AssociateUserController {
         if (user.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Associate user not found");
         }
+
+        var recordValidation = new RecordValidation<UpdateAssociateUserDto>(dto);
+        
+        var cleanedDto = recordValidation.removeNullValues(UpdateAssociateUserDto.class, dto);
+        
         
         var userModel = user.get();
 
-
-        UpdateAssociateUserDto obj = new UpdateAssociateUserDto(
-            null, null, "teste", null, null, null, null, null);
-
-        var fields = new ArrayList<Field>();
-        RecordComponent[] components = UpdateAssociateUserDto.class.getRecordComponents();
-        for (var comp : components) {
-            try {
-                Field field = obj.getClass()
-                .getDeclaredField(comp.getName());
-                field.setAccessible(true);
-                fields.add(field);
-
-
-
-                // var a = fields.get(0);
-                // System.out.println(a.getName());
-                // System.out.println(a.get(obj));
-            } catch (NoSuchFieldException e) {
-            }
-        }
-
-        for (var i = 0; i < fields.size(); i++) {
-            var a = fields.get(i);
-            System.out.println(a.getName());
-            System.out.println(a.get(obj));
-
-        }
         
-        // var a = fields.get(0);
-        //         System.out.println(a.getName());
-        //         System.out.println(a.get(obj));
+
+
+        // // UpdateAssociateUserDto obj = new UpdateAssociateUserDto(
+        // //     null, null, "teste", null, null, null, null, null);
 
         // var fields = new ArrayList<Field>();
-        // for (var field: UpdateAssociateUserDto.class.getDeclaredFields()) {
-        //     field.setAccessible(true);
-        //     fields.add(field);
+        // RecordComponent[] components = UpdateAssociateUserDto.class.getRecordComponents();
+        // for (var comp : components) {
+        //     try {
+        //         Field field = dto.getClass()
+        //         .getDeclaredField(comp.getName());
+        //         field.setAccessible(true);
+        //         fields.add(field);
+
+
+
+        //         // var a = fields.get(0);
+        //         // System.out.println(a.getName());
+        //         // System.out.println(a.get(obj));
+        //     } catch (NoSuchFieldException e) {
+        //     }
         // }
 
-        // for (var elem: fields) {
-        //     UpdateAssociateUserDto obj = new UpdateAssociateUserDto();
-        //     System.out.println(elem.getName());
+        // for (var i = 0; i < fields.size(); i++) {
+        //     var a = fields.get(i);
+        //     System.out.println(a.getName());
+        //     System.out.println(a.get(dto));
+
         // }
         
-        // fields.get()
+        // // var a = fields.get(0);
+        // //         System.out.println(a.getName());
+        // //         System.out.println(a.get(obj));
 
-        // System.out.println(fields);
+        // // var fields = new ArrayList<Field>();
+        // // for (var field: UpdateAssociateUserDto.class.getDeclaredFields()) {
+        // //     field.setAccessible(true);
+        // //     fields.add(field);
+        // // }
+
+        // // for (var elem: fields) {
+        // //     UpdateAssociateUserDto obj = new UpdateAssociateUserDto();
+        // //     System.out.println(elem.getName());
+        // // }
         
-        //BeanUtils.copyProperties(dto, userModel);
+        // // fields.get()
+
+        // // System.out.println(fields);
+        
+        // //BeanUtils.copyProperties(dto, userModel);
         
         return ResponseEntity.status(HttpStatus.OK).body(associateUserRepository.save(userModel));
     }
