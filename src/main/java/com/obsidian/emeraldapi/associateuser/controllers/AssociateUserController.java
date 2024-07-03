@@ -56,7 +56,7 @@ public class AssociateUserController {
     }
 
     @PatchMapping("/associate-users/{id}")
-    public ResponseEntity<Object> updateAssociateUser(@PathVariable Long id, @RequestBody @Valid UpdateAssociateUserDto dto) throws IllegalArgumentException, IllegalAccessException {
+    public ResponseEntity<Object> updateAssociateUser(@PathVariable Long id, @RequestBody @Valid UpdateAssociateUserDto dto){
         Optional<AssociateUser> user = associateUserRepository.findById(id);
 
         if (user.isEmpty()) {
@@ -66,61 +66,27 @@ public class AssociateUserController {
         var recordValidation = new RecordValidation<UpdateAssociateUserDto>(dto);
         
         var cleanedDto = recordValidation.removeNullValues(UpdateAssociateUserDto.class, dto);
-        
-        
+    
         var userModel = user.get();
 
-        
+        var modelFieldList = AssociateUser.class.getDeclaredFields();
 
+        for (var entry: cleanedDto.entrySet()) {
+            var key = entry.getKey();
+            var value = entry.getValue();
 
-        // // UpdateAssociateUserDto obj = new UpdateAssociateUserDto(
-        // //     null, null, "teste", null, null, null, null, null);
-
-        // var fields = new ArrayList<Field>();
-        // RecordComponent[] components = UpdateAssociateUserDto.class.getRecordComponents();
-        // for (var comp : components) {
-        //     try {
-        //         Field field = dto.getClass()
-        //         .getDeclaredField(comp.getName());
-        //         field.setAccessible(true);
-        //         fields.add(field);
-
-
-
-        //         // var a = fields.get(0);
-        //         // System.out.println(a.getName());
-        //         // System.out.println(a.get(obj));
-        //     } catch (NoSuchFieldException e) {
-        //     }
-        // }
-
-        // for (var i = 0; i < fields.size(); i++) {
-        //     var a = fields.get(i);
-        //     System.out.println(a.getName());
-        //     System.out.println(a.get(dto));
-
-        // }
-        
-        // // var a = fields.get(0);
-        // //         System.out.println(a.getName());
-        // //         System.out.println(a.get(obj));
-
-        // // var fields = new ArrayList<Field>();
-        // // for (var field: UpdateAssociateUserDto.class.getDeclaredFields()) {
-        // //     field.setAccessible(true);
-        // //     fields.add(field);
-        // // }
-
-        // // for (var elem: fields) {
-        // //     UpdateAssociateUserDto obj = new UpdateAssociateUserDto();
-        // //     System.out.println(elem.getName());
-        // // }
-        
-        // // fields.get()
-
-        // // System.out.println(fields);
-        
-        // //BeanUtils.copyProperties(dto, userModel);
+            for (var field: modelFieldList) {
+                if (field.getName().equals(key)) {
+                    field.setAccessible(true);
+                    
+                    try {
+                         field.set(userModel, value);
+                    } catch (IllegalAccessException e) {
+                    }
+                }
+            }
+            
+        }
         
         return ResponseEntity.status(HttpStatus.OK).body(associateUserRepository.save(userModel));
     }
