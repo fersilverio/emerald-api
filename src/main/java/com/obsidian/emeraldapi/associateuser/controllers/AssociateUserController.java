@@ -1,7 +1,6 @@
 package com.obsidian.emeraldapi.associateuser.controllers;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,90 +16,37 @@ import org.springframework.web.bind.annotation.RequestBody;
 import com.obsidian.emeraldapi.associateuser.dto.AssociateUserDto;
 import com.obsidian.emeraldapi.associateuser.dto.UpdateAssociateUserDto;
 import com.obsidian.emeraldapi.associateuser.models.AssociateUser;
-import com.obsidian.emeraldapi.associateuser.repositories.AssociateUserRepository;
-import com.obsidian.emeraldapi.utils.RecordValidation;
+import com.obsidian.emeraldapi.associateuser.services.AssociateUserService;
 
 import jakarta.validation.Valid;
 
 @Controller
 public class AssociateUserController {
     @Autowired
-    AssociateUserRepository associateUserRepository;
+    AssociateUserService service;
 
     @PostMapping("/associate-users")
     public ResponseEntity<AssociateUser> createAssociateUser(@RequestBody @Valid AssociateUserDto dto) {
-        var associateUser = new AssociateUser(
-            dto.name(), 
-            dto.email(), 
-            dto.nickName(), 
-            dto.password()
-        );
-        
-        return ResponseEntity.status(HttpStatus.CREATED).body((associateUserRepository.save(associateUser)));
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.create(dto));
     }
 
     @GetMapping("/associate-users")
     public ResponseEntity<List<AssociateUser>> getAllAssociateUsers() {
-        return ResponseEntity.status(HttpStatus.OK).body(associateUserRepository.findAll());
+        return ResponseEntity.status(HttpStatus.OK).body(service.findAll());
     }
 
     @GetMapping("/associate-users/{id}")
-    public ResponseEntity<Object> getAssociateUserById(@PathVariable Long id) {
-        Optional<AssociateUser> user = associateUserRepository.findById(id);
-
-        if (user.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Associate user not found");
-        }
-        
-        return ResponseEntity.status(HttpStatus.OK).body(user.get());
+    public ResponseEntity<AssociateUser> getAssociateUserById(@PathVariable Long id) {
+        return ResponseEntity.status(HttpStatus.OK).body(service.findById(id));
     }
 
     @PatchMapping("/associate-users/{id}")
-    public ResponseEntity<Object> updateAssociateUser(@PathVariable Long id, @RequestBody @Valid UpdateAssociateUserDto dto){
-        Optional<AssociateUser> user = associateUserRepository.findById(id);
-
-        if (user.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Associate user not found");
-        }
-
-        var recordValidation = new RecordValidation<UpdateAssociateUserDto>(dto);
-        
-        var cleanedDto = recordValidation.removeNullValues(UpdateAssociateUserDto.class, dto);
-    
-        var userModel = user.get();
-
-        var modelFieldList = AssociateUser.class.getDeclaredFields();
-
-        for (var entry: cleanedDto.entrySet()) {
-            var key = entry.getKey();
-            var value = entry.getValue();
-
-            for (var field: modelFieldList) {
-                if (field.getName().equals(key)) {
-                    field.setAccessible(true);
-                    
-                    try {
-                         field.set(userModel, value);
-                    } catch (IllegalAccessException e) {
-                    }
-                }
-            }
-            
-        }
-        
-        return ResponseEntity.status(HttpStatus.OK).body(associateUserRepository.save(userModel));
+    public ResponseEntity<AssociateUser> updateAssociateUser(@PathVariable Long id, @RequestBody @Valid UpdateAssociateUserDto dto){
+        return ResponseEntity.status(HttpStatus.OK).body(service.update(id, dto));
     }
 
     @DeleteMapping("/associate-users/{id}")
-    public ResponseEntity<Object> deleteAssociateUser(@PathVariable Long id) {
-        Optional<AssociateUser> user = associateUserRepository.findById(id);
-
-        if (user.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Associate user not found");
-        }
-
-        associateUserRepository.delete(user.get());
-
-        return ResponseEntity.status(HttpStatus.OK).body("Associate user successfully deleted");
+    public ResponseEntity<AssociateUser> deleteAssociateUser(@PathVariable Long id) {
+        return ResponseEntity.status(HttpStatus.OK).body(service.delete(id));
     }
 }
