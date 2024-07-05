@@ -2,6 +2,8 @@ package com.obsidian.emeraldapi.associateuser.models;
 
 import java.util.Date;
 
+import com.obsidian.emeraldapi.associateuser.enums.UserRole;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -30,6 +32,8 @@ public class AssociateUser {
     private Date createDate;
     @Column(name = "update_date")
     private Date updateDate;
+    private UserRole role;
+
 
     public AssociateUser(){
 
@@ -200,6 +204,14 @@ public class AssociateUser {
      */
     public void setUpdateDate(Date updateDate) {
         this.updateDate = updateDate;
+    }
+
+    public UserRole getRole() {
+        return role;
+    }
+
+    public void setRole(UserRole role) {
+        this.role = role;
     }
 
 }
