@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.obsidian.emeraldapi.associateuser.enums.UserRole;
 import com.obsidian.emeraldapi.associateuser.models.AssociateUser;
 import com.obsidian.emeraldapi.associateuser.repositories.AssociateUserRepository;
 import com.obsidian.emeraldapi.authentication.dto.AuthDto;
@@ -35,6 +36,9 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody @Valid AuthDto data) {
         var usernamePassword = new UsernamePasswordAuthenticationToken(data.email(), data.password());
+        
+        System.out.println(this.authManager);
+
         var auth = this.authManager.authenticate(usernamePassword);
 
         var token = tokenService.generateToken((AssociateUser) auth.getPrincipal());
@@ -42,8 +46,8 @@ public class AuthController {
         return ResponseEntity.ok(new LoginResponseDto(token));
     }
 
-    @SuppressWarnings("rawtypes")
     @PostMapping("/register")
+    @SuppressWarnings("rawtypes")
     public ResponseEntity register(@RequestBody @Valid RegisterDto data) {
         if (this.associateUserRepository.findByEmail(data.email()) != null)
             return ResponseEntity.badRequest().build();
@@ -54,7 +58,8 @@ public class AuthController {
             data.name(), 
             data.email(), 
             data.nickName(), 
-            encryptedPassword
+            encryptedPassword,
+            UserRole.USER
         );
             
 

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.obsidian.emeraldapi.associateuser.dto.AssociateUserDto;
 import com.obsidian.emeraldapi.associateuser.dto.UpdateAssociateUserDto;
+import com.obsidian.emeraldapi.associateuser.enums.UserRole;
 import com.obsidian.emeraldapi.associateuser.models.AssociateUser;
 import com.obsidian.emeraldapi.associateuser.repositories.AssociateUserRepository;
 import com.obsidian.emeraldapi.utils.RecordValidation;
@@ -23,7 +24,8 @@ public class AssociateUserService {
                 dto.name(), 
                 dto.email(), 
                 dto.nickName(), 
-                dto.password()
+                dto.password(),
+                UserRole.USER
             );
 
             AssociateUser user = repository.save(associateUser);
