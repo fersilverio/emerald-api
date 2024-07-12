@@ -4,18 +4,12 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.obsidian.emeraldapi.associateuser.enums.UserRole;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "associate_users")
@@ -38,6 +32,8 @@ public class AssociateUser implements UserDetails {
     private Date createDate;
     @Column(name = "update_date")
     private Date updateDate;
+
+    @Enumerated(EnumType.ORDINAL)
     private UserRole role;
 
 
@@ -56,7 +52,7 @@ public class AssociateUser implements UserDetails {
         this.level = null;
         this.rank = null;
         this.clan = null;
-        this.role = UserRole.USER;
+        this.role = role;
     }
 
     /**

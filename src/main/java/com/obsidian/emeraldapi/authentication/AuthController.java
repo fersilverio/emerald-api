@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.obsidian.emeraldapi.associateuser.enums.UserRole;
 import com.obsidian.emeraldapi.associateuser.models.AssociateUser;
 import com.obsidian.emeraldapi.associateuser.repositories.AssociateUserRepository;
 import com.obsidian.emeraldapi.authentication.dto.AuthDto;
@@ -59,7 +58,7 @@ public class AuthController {
             data.email(), 
             data.nickName(), 
             encryptedPassword,
-            UserRole.USER
+            data.role()
         );
             
 
